@@ -4,7 +4,7 @@ $LOCATION = "westeurope"
 $DEPLOYMENT_NAME = "aca-demo-bicep"
 $TEMPLATE_FILE = "mainenv.bicep"
 $PARAMETERS_FILE = "azuredeployenv.parameters.json"
-$ENV_FILE = "azuredeploy.env"
+$ENV_FILE = "azuredeployenv.json"
 
 # Function to create a resource group
 function Create-ResourceGroup {
