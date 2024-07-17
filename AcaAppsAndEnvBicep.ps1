@@ -2,7 +2,9 @@
 $RESOURCE_GROUP = "rg-aca-app-bicep"
 $LOCATION = "westeurope"
 $DEPLOYMENT_NAME = "aca-demo-bicep"
-$TEMPLATE_FILE = "main.bicep"
+$TEMPLATE_FILE = "mainenv.bicep"
+$PARAMETERS_FILE = "azuredeployenv.parameters.json"
+$ENV_FILE = "azuredeploy.env"
 
 # Function to create a resource group
 function Create-ResourceGroup {
@@ -25,10 +27,11 @@ function Preview-Deployment {
     param (
         [string]$DeploymentName,
         [string]$ResourceGroupName,
-        [string]$TemplateFile
+        [string]$TemplateFile,
+        [string]$ParametersFile
     )
     Write-Host "Previewing deployment changes for: $DeploymentName"
-    az deployment group what-if --name $DeploymentName --resource-group $ResourceGroupName --template-file $TemplateFile
+    az deployment group what-if --name $DeploymentName --resource-group $ResourceGroupName --template-file $TemplateFile --parameters @$ParametersFile
     if ($?) {
         Write-Host "Preview completed successfully."
     } else {
@@ -42,10 +45,11 @@ function Apply-Deployment {
     param (
         [string]$DeploymentName,
         [string]$ResourceGroupName,
-        [string]$TemplateFile
+        [string]$TemplateFile,
+        [string]$ParametersFile
     )
     Write-Host "Applying deployment: $DeploymentName"
-    az deployment group create --name $DeploymentName --resource-group $ResourceGroupName --template-file $TemplateFile
+    az deployment group create --name $DeploymentName --resource-group $ResourceGroupName --template-file $TemplateFile --parameters @$ParametersFile
     if ($?) {
         Write-Host "Deployment applied successfully."
     } else {
@@ -73,12 +77,12 @@ function Delete-Deployment {
 # Main script execution
 try {
     Create-ResourceGroup -ResourceGroupName $RESOURCE_GROUP -Location $LOCATION
-    Preview-Deployment -DeploymentName $DEPLOYMENT_NAME -ResourceGroupName $RESOURCE_GROUP -TemplateFile $TEMPLATE_FILE
-    Apply-Deployment -DeploymentName $DEPLOYMENT_NAME -ResourceGroupName $RESOURCE_GROUP -TemplateFile $TEMPLATE_FILE
+    Preview-Deployment -DeploymentName $DEPLOYMENT_NAME -ResourceGroupName $RESOURCE_GROUP -TemplateFile $TEMPLATE_FILE -ParametersFile $PARAMETERS_FILE
+    Apply-Deployment -DeploymentName $DEPLOYMENT_NAME -ResourceGroupName $RESOURCE_GROUP -TemplateFile $TEMPLATE_FILE -ParametersFile $PARAMETERS_FILE
 } catch {
     Write-Error "An error occurred: $_"
     exit 1
 }
 
-# Delete the deployment at the end
-Delete-Deployment -DeploymentName $DEPLOYMENT_NAME -ResourceGroupName $RESOURCE_GROUP
+# Uncomment the following line to delete the deployment
+# Delete-Deployment -DeploymentName $DEPLOYMENT_NAME -ResourceGroupName $RESOURCE_GROUP
